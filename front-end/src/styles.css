@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  background-color: #05070c;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-ink text-slate-100 min-h-screen antialiased font-sans;
+  background-image: radial-gradient(circle at 12% 20%, rgba(59, 130, 246, 0.08), transparent 28%), radial-gradient(circle at 82% 10%, rgba(147, 51, 234, 0.07), transparent 26%), radial-gradient(circle at 40% 80%, rgba(16, 185, 129, 0.06), transparent 30%), linear-gradient(180deg, rgba(10, 12, 20, 0.8), rgba(5, 7, 12, 0.95));
+  background-attachment: fixed;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.65), rgba(14, 165, 233, 0.65));
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.glass {
+  @apply bg-white/5 border border-white/5 backdrop-blur-xl;
+}
+
+.panel {
+  @apply glass rounded-2xl shadow-floating;
+}
+
+.code-block {
+  @apply font-mono text-sm leading-relaxed bg-slate-900/70 border border-white/10 rounded-xl px-4 py-3 overflow-auto;
+}
+
+.pill {
+  @apply inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs uppercase tracking-wide text-slate-200;
+}
+
+.parallax-blob {
+  filter: blur(60px);
+  opacity: 0.6;
+}
+
+.floating {
+  animation: float 9s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}

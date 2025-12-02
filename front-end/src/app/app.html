@@ -1,0 +1,366 @@
+<div id="page" class="relative overflow-hidden min-h-screen">
+  <div class="pointer-events-none absolute inset-0 opacity-60">
+    <div
+      class="absolute -left-24 top-10 h-72 w-72 rounded-full bg-cyan-500/20 parallax-blob"
+      #parallaxLayer
+      data-depth="12"></div>
+    <div
+      class="absolute right-0 top-40 h-80 w-80 rounded-full bg-violet-500/15 parallax-blob"
+      #parallaxLayer
+      data-depth="18"></div>
+    <div
+      class="absolute left-40 bottom-0 h-72 w-72 rounded-full bg-emerald-500/12 parallax-blob"
+      #parallaxLayer
+      data-depth="10"></div>
+  </div>
+
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+    <div class="absolute inset-0 opacity-[0.08] bg-[radial-gradient(circle_at_25%_25%,rgba(255,255,255,0.15),transparent_35%)]"></div>
+  </div>
+
+  <header class="relative z-10 max-w-6xl mx-auto px-6 pt-8 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 grid place-items-center text-lg font-semibold text-white shadow-floating">
+        SQL
+      </div>
+      <div>
+        <p class="text-sm text-slate-300">SQLite Converter UI</p>
+        <p class="text-xl font-semibold">Frontend ready for your routes</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="hidden md:flex items-center gap-2">
+        <span class="pill floating-chip">Tailwind</span>
+        <span class="pill floating-chip">GSAP</span>
+        <span class="pill floating-chip">Parallax</span>
+      </div>
+      <button
+        type="button"
+        (click)="toggleLiveMode()"
+        class="glass px-4 py-2 rounded-full flex items-center gap-2 border-white/10 hover:border-cyan-400/50 transition">
+        <span class="relative inline-flex h-6 w-11 items-center rounded-full bg-white/10">
+          <span
+            class="absolute inline-flex h-5 w-5 rounded-full bg-gradient-to-r from-sky-400 to-cyan-400 shadow-floating transition"
+            [class.translate-x-5]="liveMode"></span>
+        </span>
+        <span class="text-sm font-medium">{{ liveMode ? 'Live mode' : 'Preview only' }}</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="relative z-10 max-w-6xl mx-auto px-6 pb-20">
+    <section class="pt-10 lg:pt-16">
+      <div class="panel relative overflow-hidden">
+        <div class="absolute right-8 top-6 text-xs uppercase tracking-[0.2em] text-slate-400">GSAP powered</div>
+        <div class="grid lg:grid-cols-2 gap-10 p-8 lg:p-12 items-center" #reveal>
+          <div class="space-y-6">
+            <p class="pill w-fit">SQLite converter · API friendly</p>
+            <h1 #heroTitle class="text-4xl lg:text-5xl font-semibold leading-tight">
+              Dark, animated front-end for your SQLite conversion routes.
+            </h1>
+            <p class="text-lg text-slate-300">
+              Drop databases, pick output formats, and wire directly into your existing endpoints. Parallax visuals and GSAP
+              motion keep the flow modern while Tailwind handles the polish.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <button
+                type="button"
+                (click)="scrollToWorkspace()"
+                class="rounded-full bg-gradient-to-r from-sky-500 to-cyan-400 px-5 py-3 font-semibold text-slate-950 shadow-floating hover:scale-[1.01] transition">
+                Jump to converter
+              </button>
+              <div class="pill">No backend changes needed</div>
+              <div class="pill">Upload + API mode</div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 pt-4">
+              <div class="glass rounded-xl p-3">
+                <p class="text-xs uppercase text-slate-400 mb-2">Ready for</p>
+                <p class="text-lg font-semibold">JSON · CSV · SQL · NDJSON</p>
+              </div>
+              <div class="glass rounded-xl p-3">
+                <p class="text-xs uppercase text-slate-400 mb-2">Animations</p>
+                <p class="text-lg font-semibold">Parallax + ScrollTrigger</p>
+              </div>
+            </div>
+          </div>
+          <div class="glass rounded-2xl border border-white/10 bg-slate-900/40 p-6 space-y-4 shadow-floating" #reveal>
+            <div class="flex items-center justify-between">
+              <p class="text-sm text-slate-300">Preview</p>
+              <span class="pill">{{ selectedFormat.toUpperCase() }} mode</span>
+            </div>
+            <pre class="code-block h-72 whitespace-pre-wrap">{{ previewOutput }}</pre>
+            <div class="flex items-center justify-between text-sm text-slate-400">
+              <div>Last build: {{ lastUpdated || 'Not run yet' }}</div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="inline-block h-2 w-2 rounded-full"
+                  [ngClass]="{ 'bg-green-400': status === 'success', 'bg-amber-400': status === 'live', 'bg-rose-400': status === 'error', 'bg-slate-500': status === 'idle' }"></span>
+                <span>{{ statusMessage }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="workspace" class="mt-16 space-y-6" #reveal>
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="pill">Conversion workspace</p>
+          <h2 class="text-2xl font-semibold mt-3">Wire your endpoints, then convert</h2>
+          <p class="text-slate-300">Preview locally or toggle Live to hit your routes with the same payloads.</p>
+        </div>
+        <div class="glass px-4 py-3 rounded-xl text-sm">
+          <div class="flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+            <span>Latency {{ durationMs }}ms</span>
+          </div>
+          <div class="text-slate-400">Updated {{ lastUpdated || '–' }}</div>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-6">
+        <form class="lg:col-span-2 space-y-4 panel p-6" (submit)="runConversion($event)">
+          <div class="grid md:grid-cols-2 gap-4">
+            <label class="space-y-2">
+              <span class="text-sm text-slate-300">API base URL</span>
+              <input
+                name="baseUrl"
+                class="w-full rounded-xl bg-slate-900/70 border-white/10 text-slate-100 focus:border-cyan-400 focus:ring-0"
+                [value]="baseUrl"
+                (input)="baseUrl = $any($event.target).value"
+                placeholder="https://api.yourdomain.com" />
+            </label>
+            <label class="space-y-2">
+              <span class="text-sm text-slate-300">Convert route</span>
+              <input
+                name="route"
+                class="w-full rounded-xl bg-slate-900/70 border-white/10 text-slate-100 focus:border-cyan-400 focus:ring-0"
+                [value]="convertRoute"
+                (input)="convertRoute = $any($event.target).value"
+                placeholder="/convert" />
+            </label>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <label class="space-y-2">
+              <span class="text-sm text-slate-300">Table / namespace</span>
+              <input
+                name="table"
+                class="w-full rounded-xl bg-slate-900/70 border-white/10 text-slate-100 focus:border-cyan-400 focus:ring-0"
+                [value]="selectedTable"
+                (input)="selectedTable = $any($event.target).value"
+                placeholder="main" />
+            </label>
+            <label class="space-y-2">
+              <span class="text-sm text-slate-300">Batch size</span>
+              <input
+                type="number"
+                min="1"
+                max="5000"
+                name="batch"
+                class="w-full rounded-xl bg-slate-900/70 border-white/10 text-slate-100 focus:border-cyan-400 focus:ring-0"
+                [value]="batchSize"
+                (input)="batchSize = +($any($event.target).value || '0')"
+                placeholder="500" />
+            </label>
+          </div>
+
+          <div class="space-y-2">
+            <p class="text-sm text-slate-300">Output format</p>
+            <div class="flex flex-wrap gap-3">
+              <button
+                type="button"
+                *ngFor="let option of formatOptions"
+                (click)="setFormat(option.value)"
+                class="flex flex-col items-start rounded-xl border border-white/10 px-4 py-3 bg-slate-900/60 hover:border-cyan-400/70 transition"
+                [ngClass]="{ 'border-cyan-400/80 shadow-floating': selectedFormat === option.value }">
+                <span class="text-sm font-semibold">{{ option.label }}</span>
+                <span class="text-xs text-slate-400">{{ option.description }}</span>
+                <span class="mt-2 inline-flex rounded-full px-3 py-1 text-[11px] text-slate-950 font-semibold bg-gradient-to-r" [ngClass]="option.accent">Choose</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-4">
+            <label class="flex items-center gap-3 glass rounded-xl px-4 py-3 border-white/10">
+              <input
+                type="checkbox"
+                class="rounded-md border-white/20 bg-slate-900/70 text-cyan-400 focus:ring-cyan-400"
+                [checked]="includeSchema"
+                (change)="includeSchema = $any($event.target).checked" />
+              <div>
+                <p class="font-medium">Include schema</p>
+                <p class="text-sm text-slate-400">Emit CREATE TABLE DDL</p>
+              </div>
+            </label>
+            <label class="flex items-center gap-3 glass rounded-xl px-4 py-3 border-white/10">
+              <input
+                type="checkbox"
+                class="rounded-md border-white/20 bg-slate-900/70 text-cyan-400 focus:ring-cyan-400"
+                [checked]="wrapInTransaction"
+                (change)="wrapInTransaction = $any($event.target).checked" />
+              <div>
+                <p class="font-medium">Wrap in transaction</p>
+                <p class="text-sm text-slate-400">Safer bulk inserts</p>
+              </div>
+            </label>
+            <label class="flex items-center gap-3 glass rounded-xl px-4 py-3 border-white/10">
+              <input
+                type="checkbox"
+                class="rounded-md border-white/20 bg-slate-900/70 text-cyan-400 focus:ring-cyan-400"
+                [checked]="prettyPrint"
+                (change)="prettyPrint = $any($event.target).checked" />
+              <div>
+                <p class="font-medium">Pretty print</p>
+                <p class="text-sm text-slate-400">Readable JSON/SQL</p>
+              </div>
+            </label>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4 items-center">
+            <div
+              class="glass rounded-xl border border-dashed border-cyan-400/40 bg-slate-900/50 p-5"
+              (dragover)="handleDragOver($event)"
+              (drop)="handleDrop($event)">
+              <p class="text-sm text-slate-300 mb-2">SQLite file</p>
+              <label class="flex items-center justify-between gap-3 cursor-pointer">
+                <div class="flex-1">
+                  <p class="font-semibold">{{ selectedFileName }}</p>
+                  <p class="text-sm text-slate-400">Drag & drop is supported</p>
+                </div>
+                <span class="rounded-full bg-gradient-to-r from-sky-500 to-cyan-400 px-4 py-2 text-slate-950 font-semibold">Browse</span>
+                <input type="file" accept=".sqlite,.db" class="hidden" (change)="onFileSelected($event)" />
+              </label>
+            </div>
+            <div class="space-y-2 text-sm text-slate-400">
+              <p>Base health route: <span class="text-slate-100 font-medium">{{ healthRoute }}</span></p>
+              <p>Live toggle keeps requests client-side until you are ready.</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3 pt-2">
+            <button
+              type="submit"
+              [disabled]="isBusy"
+              class="rounded-full bg-gradient-to-r from-emerald-500 to-cyan-400 px-5 py-3 font-semibold text-slate-950 shadow-floating hover:scale-[1.01] transition disabled:opacity-60 disabled:cursor-not-allowed">
+              {{ isBusy ? 'Working...' : (liveMode ? 'Send to backend' : 'Run preview') }}
+            </button>
+            <div class="flex items-center gap-2 text-sm text-slate-300">
+              <span class="h-2 w-2 rounded-full" [ngClass]="{ 'bg-emerald-400': !liveMode, 'bg-cyan-400': liveMode }"></span>
+              {{ liveMode ? 'Live calls enabled' : 'Stays local until you toggle Live' }}
+            </div>
+          </div>
+        </form>
+
+        <aside class="panel p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-slate-300">Route summary</p>
+            <span class="pill">Status: {{ status }}</span>
+          </div>
+          <div class="text-sm text-slate-300 space-y-2">
+            <div class="flex items-center justify-between">
+              <span>Base URL</span>
+              <span class="font-semibold text-slate-100">{{ baseUrl }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>Endpoint</span>
+              <span class="font-semibold text-slate-100">{{ convertRoute }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>Format</span>
+              <span class="font-semibold text-slate-100">{{ selectedFormat.toUpperCase() }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>Table</span>
+              <span class="font-semibold text-slate-100">{{ selectedTable }}</span>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <p class="text-sm text-slate-300">Generated curl</p>
+            <pre class="code-block text-xs whitespace-pre-wrap">{{ generatedCurl }}</pre>
+          </div>
+          <div class="space-y-2 text-sm text-slate-300">
+            <p class="font-semibold">Live preview tips</p>
+            <ul class="list-disc list-inside text-slate-400 space-y-1">
+              <li>Update the base URL to your gateway.</li>
+              <li>Enable CORS for the origin running this UI.</li>
+              <li>Swap the form field names to match your backend if needed.</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="mt-14 grid lg:grid-cols-3 gap-4" #reveal>
+      <div *ngFor="let card of highlightCards" class="panel p-5 space-y-2">
+        <div class="pill w-fit">{{ card.badge }}</div>
+        <h3 class="text-xl font-semibold">{{ card.title }}</h3>
+        <p class="text-slate-300">{{ card.detail }}</p>
+      </div>
+    </section>
+
+    <section class="mt-12 grid lg:grid-cols-2 gap-6 items-start" #reveal>
+      <div class="panel p-6 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 grid place-items-center text-slate-950 font-bold">1</div>
+          <div>
+            <p class="text-sm text-slate-400">Flow</p>
+            <h3 class="text-xl font-semibold">Conversion choreography</h3>
+          </div>
+        </div>
+        <ol class="space-y-3 text-slate-300">
+          <li *ngFor="let step of workflowSteps" class="glass rounded-xl px-4 py-3 border-white/10">{{ step }}</li>
+        </ol>
+      </div>
+      <div class="panel p-6 space-y-4">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 grid place-items-center text-slate-950 font-bold">2</div>
+          <div>
+            <p class="text-sm text-slate-400">Backend handoff</p>
+            <h3 class="text-xl font-semibold">Routes to wire</h3>
+          </div>
+        </div>
+        <div class="space-y-3 text-sm text-slate-300">
+          <div class="glass rounded-xl px-4 py-3 border-white/10">
+            <p class="font-semibold text-slate-100">POST {{ convertRoute }}</p>
+            <p class="text-slate-400">Expects: file, format, table, includeSchema, wrapInTransaction, batchSize, pretty.</p>
+          </div>
+          <div class="glass rounded-xl px-4 py-3 border-white/10">
+            <p class="font-semibold text-slate-100">GET {{ healthRoute }}</p>
+            <p class="text-slate-400">Use to show availability in the UI badge if you expose it.</p>
+          </div>
+          <div class="glass rounded-xl px-4 py-3 border-white/10">
+            <p class="font-semibold text-slate-100">Streaming / websockets</p>
+            <p class="text-slate-400">Optional channel for progress events—UI is ready for live updates.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-12 panel p-6 space-y-4" #reveal>
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="pill">Response preview</p>
+          <h3 class="text-xl font-semibold mt-2">What your users will see</h3>
+        </div>
+        <div class="text-sm text-slate-400">Duration {{ durationMs }}ms</div>
+      </div>
+      <pre class="code-block whitespace-pre-wrap text-sm h-80">{{ previewOutput }}</pre>
+      <div class="flex flex-wrap gap-3 text-sm text-slate-400">
+        <span class="pill">Schema {{ includeSchema ? 'on' : 'off' }}</span>
+        <span class="pill">Transaction {{ wrapInTransaction ? 'on' : 'off' }}</span>
+        <span class="pill">Pretty {{ prettyPrint ? 'on' : 'off' }}</span>
+        <span class="pill">Batch {{ batchSize }}</span>
+      </div>
+    </section>
+
+    <footer class="mt-10 py-6 text-sm text-slate-400 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-t border-white/10">
+      <div>SQLite Converter UI · Tailwind + Angular + GSAP</div>
+      <div class="flex items-center gap-3">
+        <span class="pill">Parallax ready</span>
+        <span class="pill">Dark mode</span>
+      </div>
+    </footer>
+  </main>
+</div>
