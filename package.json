@@ -1,0 +1,18 @@
+{
+  "name": "sqlite-converter",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "front-end",
+    "back-end"
+  ],
+  "scripts": {
+    "dev": "nx run-many -t start"
+  },
+  "devDependencies": {
+    "@angular-devkit/core": "~20.3.0",
+    "@nx/angular": "^22.1.3",
+    "nx": "22.1.3"
+  },
+  "dependencies": {}
+}
