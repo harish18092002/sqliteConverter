@@ -1,10 +1,12 @@
 {
-  "name": "back-end",
+  "name": "backend",
   "module": "index.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "bun run index.ts"
+    "serve": "bun --watch run index.ts",
+    "start": "bun --watch run index.ts",
+    "dev": "bun --watch run index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
