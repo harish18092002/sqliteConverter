@@ -66,8 +66,10 @@ export class App implements AfterViewInit {
   @ViewChild('heroTitle') private heroTitle?: ElementRef<HTMLElement>;
 
   // API Configuration - Update this to your backend URL
-  private readonly API_BASE_URL = 'http://localhost:3456';
+  private readonly API_BASE_URL =
+    'https://backend-production-6b5c.up.railway.app';
 
+  // private readonly API_BASE_URL = 'http://localhost:3456' for testing purposes
   // UI State
   protected isBusy = false;
   protected isDragging = false;
