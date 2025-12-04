@@ -1,4 +1,5 @@
 <div id="page" class="relative overflow-hidden min-h-screen">
+  <!-- Animated Background Blobs -->
   <div class="pointer-events-none absolute inset-0 opacity-60">
     <div
       class="absolute -left-24 top-10 h-72 w-72 rounded-full bg-cyan-500/20 parallax-blob"
@@ -14,352 +15,343 @@
       data-depth="10"></div>
   </div>
 
+  <!-- Subtle Grid Pattern -->
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-    <div class="absolute inset-0 opacity-[0.08] bg-[radial-gradient(circle_at_25%_25%,rgba(255,255,255,0.15),transparent_35%)]"></div>
+    <div class="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:60px_60px]"></div>
   </div>
 
-  <header class="relative z-10 max-w-6xl mx-auto px-6 pt-8 flex items-center justify-between gap-4">
+  <!-- Header -->
+  <header class="relative z-10 max-w-5xl mx-auto px-6 pt-8 flex items-center justify-between gap-4">
     <div class="flex items-center gap-3">
-      <div class="h-11 w-11 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 grid place-items-center text-lg font-semibold text-white shadow-floating">
-        SQL
+      <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-600 grid place-items-center shadow-floating">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+        </svg>
       </div>
       <div>
-        <p class="text-sm text-slate-300">SQLite Converter UI</p>
-        <p class="text-xl font-semibold">Frontend ready for your routes</p>
+        <p class="text-xl font-bold bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">SQLite to JSON</p>
+        <p class="text-sm text-slate-400">Convert instantly</p>
       </div>
     </div>
     <div class="flex items-center gap-3">
-      <div class="hidden md:flex items-center gap-2">
-        <span class="pill floating-chip">Tailwind</span>
-        <span class="pill floating-chip">GSAP</span>
-        <span class="pill floating-chip">Parallax</span>
-      </div>
-      <button
-        type="button"
-        (click)="toggleLiveMode()"
-        class="glass px-4 py-2 rounded-full flex items-center gap-2 border-white/10 hover:border-cyan-400/50 transition">
-        <span class="relative inline-flex h-6 w-11 items-center rounded-full bg-white/10">
-          <span
-            class="absolute inline-flex h-5 w-5 rounded-full bg-gradient-to-r from-sky-400 to-cyan-400 shadow-floating transition"
-            [class.translate-x-5]="liveMode"></span>
-        </span>
-        <span class="text-sm font-medium">{{ liveMode ? 'Live mode' : 'Preview only' }}</span>
-      </button>
+      <span class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+        <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        API Ready
+      </span>
     </div>
   </header>
 
-  <main class="relative z-10 max-w-6xl mx-auto px-6 pb-20">
-    <section class="pt-10 lg:pt-16">
-      <div class="panel relative overflow-hidden">
-        <div class="absolute right-8 top-6 text-xs uppercase tracking-[0.2em] text-slate-400">GSAP powered</div>
-        <div class="grid lg:grid-cols-2 gap-10 p-8 lg:p-12 items-center" #reveal>
-          <div class="space-y-6">
-            <p class="pill w-fit">SQLite converter · API friendly</p>
-            <h1 #heroTitle class="text-4xl lg:text-5xl font-semibold leading-tight">
-              Dark, animated front-end for your SQLite conversion routes.
-            </h1>
-            <p class="text-lg text-slate-300">
-              Drop databases, pick output formats, and wire directly into your existing endpoints. Parallax visuals and GSAP
-              motion keep the flow modern while Tailwind handles the polish.
-            </p>
-            <div class="flex flex-wrap gap-3">
-              <button
-                type="button"
-                (click)="scrollToWorkspace()"
-                class="rounded-full bg-gradient-to-r from-sky-500 to-cyan-400 px-5 py-3 font-semibold text-slate-950 shadow-floating hover:scale-[1.01] transition">
-                Jump to converter
-              </button>
-              <div class="pill">No backend changes needed</div>
-              <div class="pill">Upload + API mode</div>
-            </div>
-            <div class="grid grid-cols-2 gap-4 pt-4">
-              <div class="glass rounded-xl p-3">
-                <p class="text-xs uppercase text-slate-400 mb-2">Ready for</p>
-                <p class="text-lg font-semibold">JSON · CSV · SQL · NDJSON</p>
-              </div>
-              <div class="glass rounded-xl p-3">
-                <p class="text-xs uppercase text-slate-400 mb-2">Animations</p>
-                <p class="text-lg font-semibold">Parallax + ScrollTrigger</p>
-              </div>
-            </div>
+  <main class="relative z-10 max-w-5xl mx-auto px-6 pb-20">
+    <!-- Hero Section -->
+    <section class="pt-16 lg:pt-24 pb-16" #reveal>
+      <div class="text-center max-w-3xl mx-auto space-y-6">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300">
+          <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          Fast, secure, and free to use
+        </div>
+        
+        <h1 #heroTitle class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+          <span class="bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">Transform SQLite to</span>
+          <br>
+          <span class="bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400 bg-clip-text text-transparent">JSON in seconds</span>
+        </h1>
+        
+        <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          Upload your SQLite database file and instantly get a clean, structured JSON output. 
+          No signup required. Your data stays private.
+        </p>
+        
+        <div class="flex flex-wrap justify-center gap-4 pt-4">
+          <button
+            type="button"
+            (click)="scrollToWorkspace()"
+            class="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-sky-500 px-6 py-3.5 font-semibold text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] transition-all duration-200">
+            Start Converting
+            <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+          </button>
+          <a href="#how-it-works" class="inline-flex items-center gap-2 rounded-full px-6 py-3.5 font-medium text-slate-300 border border-white/10 hover:border-white/20 hover:bg-white/5 transition-all duration-200">
+            How it works
+          </a>
+        </div>
+      </div>
+
+      <!-- Feature Cards -->
+      <div class="grid sm:grid-cols-3 gap-4 mt-16">
+        <div class="group p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-cyan-500/30 hover:bg-white/[0.04] transition-all duration-300">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
           </div>
-          <div class="glass rounded-2xl border border-white/10 bg-slate-900/40 p-6 space-y-4 shadow-floating" #reveal>
-            <div class="flex items-center justify-between">
-              <p class="text-sm text-slate-300">Preview</p>
-              <span class="pill">{{ selectedFormat.toUpperCase() }} mode</span>
-            </div>
-            <pre class="code-block h-72 whitespace-pre-wrap">{{ previewOutput }}</pre>
-            <div class="flex items-center justify-between text-sm text-slate-400">
-              <div>Last build: {{ lastUpdated || 'Not run yet' }}</div>
-              <div class="flex items-center gap-2">
-                <span
-                  class="inline-block h-2 w-2 rounded-full"
-                  [ngClass]="{ 'bg-green-400': status === 'success', 'bg-amber-400': status === 'live', 'bg-rose-400': status === 'error', 'bg-slate-500': status === 'idle' }"></span>
-                <span>{{ statusMessage }}</span>
-              </div>
-            </div>
+          <h3 class="font-semibold text-white mb-1">Drag & Drop</h3>
+          <p class="text-sm text-slate-400">Simply drop your .sqlite or .db file</p>
+        </div>
+        
+        <div class="group p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-emerald-500/30 hover:bg-white/[0.04] transition-all duration-300">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-500/5 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
           </div>
+          <h3 class="font-semibold text-white mb-1">100% Private</h3>
+          <p class="text-sm text-slate-400">Files processed securely on server</p>
+        </div>
+        
+        <div class="group p-5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-violet-500/30 hover:bg-white/[0.04] transition-all duration-300">
+          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-violet-500/20 to-violet-500/5 grid place-items-center mb-4">
+            <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+          </div>
+          <h3 class="font-semibold text-white mb-1">Instant Results</h3>
+          <p class="text-sm text-slate-400">Get JSON output in milliseconds</p>
         </div>
       </div>
     </section>
 
-    <section id="workspace" class="mt-16 space-y-6" #reveal>
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="pill">Conversion workspace</p>
-          <h2 class="text-2xl font-semibold mt-3">Wire your endpoints, then convert</h2>
-          <p class="text-slate-300">Preview locally or toggle Live to hit your routes with the same payloads.</p>
-        </div>
-        <div class="glass px-4 py-3 rounded-xl text-sm">
-          <div class="flex items-center gap-2">
-            <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-            <span>Latency {{ durationMs }}ms</span>
-          </div>
-          <div class="text-slate-400">Updated {{ lastUpdated || '–' }}</div>
-        </div>
+    <!-- Converter Section -->
+    <section id="workspace" class="space-y-8" #reveal>
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">Convert Your Database</h2>
+        <p class="text-slate-400 mt-2">Upload a SQLite file and get structured JSON instantly</p>
       </div>
 
-      <div class="grid lg:grid-cols-3 gap-6">
-        <form class="lg:col-span-2 space-y-4 panel p-6" (submit)="runConversion($event)">
-          <div class="grid md:grid-cols-2 gap-4">
-            <label class="space-y-2">
-              <span class="text-sm text-slate-300">API base URL</span>
-              <input
-                name="baseUrl"
-                class="w-full rounded-xl bg-slate-900/70 border-white/10 text-slate-100 focus:border-cyan-400 focus:ring-0"
-                [value]="baseUrl"
-                (input)="baseUrl = $any($event.target).value"
-                placeholder="https://api.yourdomain.com" />
+      <div class="panel p-6 sm:p-8">
+        <form (submit)="runConversion($event)" class="space-y-6">
+          <!-- File Upload Area -->
+          <div
+            class="relative rounded-2xl border-2 border-dashed transition-all duration-200 p-8"
+            [ngClass]="{
+              'border-cyan-500/50 bg-cyan-500/5': isDragging,
+              'border-white/10 hover:border-white/20 bg-white/[0.02]': !isDragging
+            }"
+            (dragover)="handleDragOver($event)"
+            (dragleave)="handleDragLeave($event)"
+            (drop)="handleDrop($event)">
+            <label class="flex flex-col items-center cursor-pointer">
+              <div class="h-16 w-16 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-sky-500/10 grid place-items-center mb-4">
+                <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                </svg>
+              </div>
+              <p class="text-lg font-semibold text-white mb-1">
+                {{ selectedFile ? selectedFileName : 'Drop your SQLite file here' }}
+              </p>
+              <p class="text-sm text-slate-400 mb-4">or click to browse</p>
+              <span class="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-4 py-2 text-sm text-slate-300 hover:bg-white/10 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                </svg>
+                Select .sqlite or .db file
+              </span>
+              <input type="file" accept=".sqlite,.db" class="hidden" (change)="onFileSelected($event)" />
             </label>
-            <label class="space-y-2">
-              <span class="text-sm text-slate-300">Convert route</span>
-              <input
-                name="route"
-                class="w-full rounded-xl bg-slate-900/70 border-white/10 text-slate-100 focus:border-cyan-400 focus:ring-0"
-                [value]="convertRoute"
-                (input)="convertRoute = $any($event.target).value"
-                placeholder="/convert" />
-            </label>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-4">
-            <label class="space-y-2">
-              <span class="text-sm text-slate-300">Table / namespace</span>
-              <input
-                name="table"
-                class="w-full rounded-xl bg-slate-900/70 border-white/10 text-slate-100 focus:border-cyan-400 focus:ring-0"
-                [value]="selectedTable"
-                (input)="selectedTable = $any($event.target).value"
-                placeholder="main" />
-            </label>
-            <label class="space-y-2">
-              <span class="text-sm text-slate-300">Batch size</span>
-              <input
-                type="number"
-                min="1"
-                max="5000"
-                name="batch"
-                class="w-full rounded-xl bg-slate-900/70 border-white/10 text-slate-100 focus:border-cyan-400 focus:ring-0"
-                [value]="batchSize"
-                (input)="batchSize = +($any($event.target).value || '0')"
-                placeholder="500" />
-            </label>
-          </div>
-
-          <div class="space-y-2">
-            <p class="text-sm text-slate-300">Output format</p>
-            <div class="flex flex-wrap gap-3">
-              <button
-                type="button"
-                *ngFor="let option of formatOptions"
-                (click)="setFormat(option.value)"
-                class="flex flex-col items-start rounded-xl border border-white/10 px-4 py-3 bg-slate-900/60 hover:border-cyan-400/70 transition"
-                [ngClass]="{ 'border-cyan-400/80 shadow-floating': selectedFormat === option.value }">
-                <span class="text-sm font-semibold">{{ option.label }}</span>
-                <span class="text-xs text-slate-400">{{ option.description }}</span>
-                <span class="mt-2 inline-flex rounded-full px-3 py-1 text-[11px] text-slate-950 font-semibold bg-gradient-to-r" [ngClass]="option.accent">Choose</span>
-              </button>
+            
+            <!-- File Selected Indicator -->
+            <div *ngIf="selectedFile" class="absolute top-4 right-4">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                File ready
+              </span>
             </div>
           </div>
 
-          <div class="grid md:grid-cols-3 gap-4">
-            <label class="flex items-center gap-3 glass rounded-xl px-4 py-3 border-white/10">
-              <input
-                type="checkbox"
-                class="rounded-md border-white/20 bg-slate-900/70 text-cyan-400 focus:ring-cyan-400"
-                [checked]="includeSchema"
-                (change)="includeSchema = $any($event.target).checked" />
-              <div>
-                <p class="font-medium">Include schema</p>
-                <p class="text-sm text-slate-400">Emit CREATE TABLE DDL</p>
-              </div>
-            </label>
-            <label class="flex items-center gap-3 glass rounded-xl px-4 py-3 border-white/10">
-              <input
-                type="checkbox"
-                class="rounded-md border-white/20 bg-slate-900/70 text-cyan-400 focus:ring-cyan-400"
-                [checked]="wrapInTransaction"
-                (change)="wrapInTransaction = $any($event.target).checked" />
-              <div>
-                <p class="font-medium">Wrap in transaction</p>
-                <p class="text-sm text-slate-400">Safer bulk inserts</p>
-              </div>
-            </label>
-            <label class="flex items-center gap-3 glass rounded-xl px-4 py-3 border-white/10">
-              <input
-                type="checkbox"
-                class="rounded-md border-white/20 bg-slate-900/70 text-cyan-400 focus:ring-cyan-400"
-                [checked]="prettyPrint"
-                (change)="prettyPrint = $any($event.target).checked" />
-              <div>
-                <p class="font-medium">Pretty print</p>
-                <p class="text-sm text-slate-400">Readable JSON/SQL</p>
-              </div>
-            </label>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-4 items-center">
-            <div
-              class="glass rounded-xl border border-dashed border-cyan-400/40 bg-slate-900/50 p-5"
-              (dragover)="handleDragOver($event)"
-              (drop)="handleDrop($event)">
-              <p class="text-sm text-slate-300 mb-2">SQLite file</p>
-              <label class="flex items-center justify-between gap-3 cursor-pointer">
-                <div class="flex-1">
-                  <p class="font-semibold">{{ selectedFileName }}</p>
-                  <p class="text-sm text-slate-400">Drag & drop is supported</p>
-                </div>
-                <span class="rounded-full bg-gradient-to-r from-sky-500 to-cyan-400 px-4 py-2 text-slate-950 font-semibold">Browse</span>
-                <input type="file" accept=".sqlite,.db" class="hidden" (change)="onFileSelected($event)" />
-              </label>
+          <!-- Convert Button -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3 text-sm text-slate-400">
+              <span class="inline-flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Max 50MB
+              </span>
+              <span class="inline-flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+                Secure processing
+              </span>
             </div>
-            <div class="space-y-2 text-sm text-slate-400">
-              <p>Base health route: <span class="text-slate-100 font-medium">{{ healthRoute }}</span></p>
-              <p>Live toggle keeps requests client-side until you are ready.</p>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap gap-3 pt-2">
+            
             <button
               type="submit"
-              [disabled]="isBusy"
-              class="rounded-full bg-gradient-to-r from-emerald-500 to-cyan-400 px-5 py-3 font-semibold text-slate-950 shadow-floating hover:scale-[1.01] transition disabled:opacity-60 disabled:cursor-not-allowed">
-              {{ isBusy ? 'Working...' : (liveMode ? 'Send to backend' : 'Run preview') }}
+              [disabled]="isBusy || !selectedFile"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-sky-500 px-8 py-3.5 font-semibold text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 hover:scale-[1.02] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none">
+              <svg *ngIf="isBusy" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <svg *ngIf="!isBusy" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              {{ isBusy ? 'Converting...' : 'Convert to JSON' }}
             </button>
-            <div class="flex items-center gap-2 text-sm text-slate-300">
-              <span class="h-2 w-2 rounded-full" [ngClass]="{ 'bg-emerald-400': !liveMode, 'bg-cyan-400': liveMode }"></span>
-              {{ liveMode ? 'Live calls enabled' : 'Stays local until you toggle Live' }}
-            </div>
           </div>
         </form>
-
-        <aside class="panel p-6 space-y-4">
-          <div class="flex items-center justify-between">
-            <p class="text-sm text-slate-300">Route summary</p>
-            <span class="pill">Status: {{ status }}</span>
-          </div>
-          <div class="text-sm text-slate-300 space-y-2">
-            <div class="flex items-center justify-between">
-              <span>Base URL</span>
-              <span class="font-semibold text-slate-100">{{ baseUrl }}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>Endpoint</span>
-              <span class="font-semibold text-slate-100">{{ convertRoute }}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>Format</span>
-              <span class="font-semibold text-slate-100">{{ selectedFormat.toUpperCase() }}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span>Table</span>
-              <span class="font-semibold text-slate-100">{{ selectedTable }}</span>
-            </div>
-          </div>
-          <div class="space-y-3">
-            <p class="text-sm text-slate-300">Generated curl</p>
-            <pre class="code-block text-xs whitespace-pre-wrap">{{ generatedCurl }}</pre>
-          </div>
-          <div class="space-y-2 text-sm text-slate-300">
-            <p class="font-semibold">Live preview tips</p>
-            <ul class="list-disc list-inside text-slate-400 space-y-1">
-              <li>Update the base URL to your gateway.</li>
-              <li>Enable CORS for the origin running this UI.</li>
-              <li>Swap the form field names to match your backend if needed.</li>
-            </ul>
-          </div>
-        </aside>
       </div>
-    </section>
 
-    <section class="mt-14 grid lg:grid-cols-3 gap-4" #reveal>
-      <div *ngFor="let card of highlightCards" class="panel p-5 space-y-2">
-        <div class="pill w-fit">{{ card.badge }}</div>
-        <h3 class="text-xl font-semibold">{{ card.title }}</h3>
-        <p class="text-slate-300">{{ card.detail }}</p>
-      </div>
-    </section>
+      <!-- Results Section -->
+      <div *ngIf="conversionResult" class="panel overflow-hidden" #reveal>
+        <!-- Result Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border-b border-white/5">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl grid place-items-center"
+              [ngClass]="{
+                'bg-emerald-500/20': status === 'success',
+                'bg-rose-500/20': status === 'error'
+              }">
+              <svg *ngIf="status === 'success'" class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <svg *ngIf="status === 'error'" class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold text-white">
+                {{ status === 'success' ? 'Conversion Complete' : 'Conversion Failed' }}
+              </h3>
+              <p class="text-sm text-slate-400">
+                {{ status === 'success' ? 'Your JSON data is ready' : errorMessage }}
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-slate-400">{{ durationMs }}ms</span>
+            <button
+              *ngIf="status === 'success'"
+              type="button"
+              (click)="copyToClipboard()"
+              class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-slate-300 hover:bg-white/10 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+              </svg>
+              {{ copied ? 'Copied!' : 'Copy JSON' }}
+            </button>
+            <button
+              *ngIf="status === 'success'"
+              type="button"
+              (click)="downloadJson()"
+              class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-sm font-medium text-cyan-400 hover:bg-cyan-500/20 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+              Download
+            </button>
+          </div>
+        </div>
 
-    <section class="mt-12 grid lg:grid-cols-2 gap-6 items-start" #reveal>
-      <div class="panel p-6 space-y-4">
-        <div class="flex items-center gap-3">
-          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 grid place-items-center text-slate-950 font-bold">1</div>
+        <!-- Stats Bar -->
+        <div *ngIf="status === 'success' && resultStats" class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-white/[0.02] border-b border-white/5">
           <div>
-            <p class="text-sm text-slate-400">Flow</p>
-            <h3 class="text-xl font-semibold">Conversion choreography</h3>
+            <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">File</p>
+            <p class="font-medium text-white truncate">{{ resultStats.fileName }}</p>
           </div>
-        </div>
-        <ol class="space-y-3 text-slate-300">
-          <li *ngFor="let step of workflowSteps" class="glass rounded-xl px-4 py-3 border-white/10">{{ step }}</li>
-        </ol>
-      </div>
-      <div class="panel p-6 space-y-4">
-        <div class="flex items-center gap-3">
-          <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 grid place-items-center text-slate-950 font-bold">2</div>
           <div>
-            <p class="text-sm text-slate-400">Backend handoff</p>
-            <h3 class="text-xl font-semibold">Routes to wire</h3>
+            <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">Tables</p>
+            <p class="font-medium text-white">{{ resultStats.tableCount }}</p>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">Total Rows</p>
+            <p class="font-medium text-white">{{ resultStats.totalRows | number }}</p>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-wide text-slate-500 mb-1">Size</p>
+            <p class="font-medium text-white">{{ formatFileSize(resultStats.fileSize) }}</p>
           </div>
         </div>
-        <div class="space-y-3 text-sm text-slate-300">
-          <div class="glass rounded-xl px-4 py-3 border-white/10">
-            <p class="font-semibold text-slate-100">POST {{ convertRoute }}</p>
-            <p class="text-slate-400">Expects: file, format, table, includeSchema, wrapInTransaction, batchSize, pretty.</p>
+
+        <!-- JSON Output -->
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-3">
+            <p class="text-sm font-medium text-slate-400">JSON Output</p>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                (click)="togglePrettyPrint()"
+                class="text-xs px-3 py-1 rounded-full border transition"
+                [ngClass]="{
+                  'bg-cyan-500/10 border-cyan-500/30 text-cyan-400': prettyPrint,
+                  'bg-white/5 border-white/10 text-slate-400 hover:text-slate-300': !prettyPrint
+                }">
+                {{ prettyPrint ? 'Formatted' : 'Minified' }}
+              </button>
+            </div>
           </div>
-          <div class="glass rounded-xl px-4 py-3 border-white/10">
-            <p class="font-semibold text-slate-100">GET {{ healthRoute }}</p>
-            <p class="text-slate-400">Use to show availability in the UI badge if you expose it.</p>
+          <pre class="code-block max-h-96 overflow-auto text-sm">{{ previewOutput }}</pre>
+        </div>
+      </div>
+
+      <!-- Empty State / Initial State -->
+      <div *ngIf="!conversionResult && !isBusy" class="panel p-8 text-center" #reveal>
+        <div class="h-16 w-16 rounded-2xl bg-white/5 grid place-items-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-white mb-2">No conversion yet</h3>
+        <p class="text-slate-400 text-sm">Upload a SQLite file above to see the JSON output here</p>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="mt-20 space-y-8" #reveal>
+      <div class="text-center">
+        <h2 class="text-2xl sm:text-3xl font-bold text-white">How It Works</h2>
+        <p class="text-slate-400 mt-2">Three simple steps to convert your database</p>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-6">
+        <div class="relative p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+          <div class="absolute -top-3 -left-3 h-8 w-8 rounded-full bg-gradient-to-br from-cyan-500 to-sky-500 grid place-items-center text-sm font-bold text-white shadow-lg">1</div>
+          <div class="pt-2">
+            <h3 class="font-semibold text-white mb-2">Upload File</h3>
+            <p class="text-sm text-slate-400">Drag and drop your SQLite database file (.sqlite or .db) into the upload area</p>
           </div>
-          <div class="glass rounded-xl px-4 py-3 border-white/10">
-            <p class="font-semibold text-slate-100">Streaming / websockets</p>
-            <p class="text-slate-400">Optional channel for progress events—UI is ready for live updates.</p>
+        </div>
+        
+        <div class="relative p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+          <div class="absolute -top-3 -left-3 h-8 w-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 grid place-items-center text-sm font-bold text-white shadow-lg">2</div>
+          <div class="pt-2">
+            <h3 class="font-semibold text-white mb-2">Click Convert</h3>
+            <p class="text-sm text-slate-400">Hit the convert button and our server will process your database securely</p>
+          </div>
+        </div>
+        
+        <div class="relative p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+          <div class="absolute -top-3 -left-3 h-8 w-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-500 grid place-items-center text-sm font-bold text-white shadow-lg">3</div>
+          <div class="pt-2">
+            <h3 class="font-semibold text-white mb-2">Get JSON</h3>
+            <p class="text-sm text-slate-400">Copy or download your structured JSON data with all tables and rows</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="mt-12 panel p-6 space-y-4" #reveal>
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="pill">Response preview</p>
-          <h3 class="text-xl font-semibold mt-2">What your users will see</h3>
+    <!-- Footer -->
+    <footer class="mt-20 pt-8 border-t border-white/5">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
+        <div class="flex items-center gap-2">
+          <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-sky-500/20 to-indigo-500/20 grid place-items-center">
+            <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+            </svg>
+          </div>
+          <span>SQLite to JSON Converter</span>
         </div>
-        <div class="text-sm text-slate-400">Duration {{ durationMs }}ms</div>
-      </div>
-      <pre class="code-block whitespace-pre-wrap text-sm h-80">{{ previewOutput }}</pre>
-      <div class="flex flex-wrap gap-3 text-sm text-slate-400">
-        <span class="pill">Schema {{ includeSchema ? 'on' : 'off' }}</span>
-        <span class="pill">Transaction {{ wrapInTransaction ? 'on' : 'off' }}</span>
-        <span class="pill">Pretty {{ prettyPrint ? 'on' : 'off' }}</span>
-        <span class="pill">Batch {{ batchSize }}</span>
-      </div>
-    </section>
-
-    <footer class="mt-10 py-6 text-sm text-slate-400 flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-t border-white/10">
-      <div>SQLite Converter UI · Tailwind + Angular + GSAP</div>
-      <div class="flex items-center gap-3">
-        <span class="pill">Parallax ready</span>
-        <span class="pill">Dark mode</span>
+        <div class="flex items-center gap-4">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 text-xs">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+            All systems operational
+          </span>
+        </div>
       </div>
     </footer>
   </main>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -14,57 +14,132 @@ html {
 }
 
 body {
-  @apply bg-ink text-slate-100 min-h-screen antialiased font-sans;
-  background-image: radial-gradient(circle at 12% 20%, rgba(59, 130, 246, 0.08), transparent 28%), radial-gradient(circle at 82% 10%, rgba(147, 51, 234, 0.07), transparent 26%), radial-gradient(circle at 40% 80%, rgba(16, 185, 129, 0.06), transparent 30%), linear-gradient(180deg, rgba(10, 12, 20, 0.8), rgba(5, 7, 12, 0.95));
+  @apply bg-ink text-slate-100 min-h-screen antialiased;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background-image: radial-gradient(
+      circle at 12% 20%,
+      rgba(59, 130, 246, 0.08),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 82% 10%,
+      rgba(147, 51, 234, 0.07),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 40% 80%,
+      rgba(16, 185, 129, 0.06),
+      transparent 30%
+    ),
+    linear-gradient(180deg, rgba(10, 12, 20, 0.8), rgba(5, 7, 12, 0.95));
   background-attachment: fixed;
 }
 
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(59, 130, 246, 0.65), rgba(14, 165, 233, 0.65));
+  background: linear-gradient(
+    180deg,
+    rgba(59, 130, 246, 0.5),
+    rgba(14, 165, 233, 0.5)
+  );
   border-radius: 999px;
 }
 
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(59, 130, 246, 0.7),
+    rgba(14, 165, 233, 0.7)
+  );
+}
+
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 999px;
 }
 
+/* Glass Effect */
 .glass {
-  @apply bg-white/5 border border-white/5 backdrop-blur-xl;
+  @apply bg-white/[0.03] border border-white/[0.06] backdrop-blur-xl;
 }
 
+/* Panel Component */
 .panel {
-  @apply glass rounded-2xl shadow-floating;
+  @apply glass rounded-2xl;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 20px 50px -20px rgba(0, 0, 0, 0.5),
+    0 10px 30px -15px rgba(6, 182, 212, 0.1);
 }
 
+/* Code Block */
 .code-block {
-  @apply font-mono text-sm leading-relaxed bg-slate-900/70 border border-white/10 rounded-xl px-4 py-3 overflow-auto;
+  @apply font-mono text-sm leading-relaxed rounded-xl px-4 py-4 overflow-auto;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.8),
+    rgba(15, 23, 42, 0.95)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
 }
 
-.pill {
-  @apply inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs uppercase tracking-wide text-slate-200;
+.code-block::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
+.code-block::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+}
+
+/* Parallax Blobs */
 .parallax-blob {
-  filter: blur(60px);
-  opacity: 0.6;
+  filter: blur(80px);
+  opacity: 0.5;
 }
 
-.floating {
-  animation: float 9s ease-in-out infinite;
-}
-
-@keyframes float {
-  0% {
-    transform: translateY(0px);
+/* Animations */
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 1;
   }
   50% {
-    transform: translateY(-12px);
+    opacity: 0.5;
   }
-  100% {
-    transform: translateY(0px);
-  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* Selection */
+::selection {
+  background: rgba(6, 182, 212, 0.3);
+  color: white;
+}
+
+/* Focus States */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid rgba(6, 182, 212, 0.5);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for interactive elements */
+button,
+a {
+  transition: all 0.2s ease;
+}
+
+/* Number formatting in stats */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }

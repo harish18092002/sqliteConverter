@@ -1,22 +1,52 @@
 import { CommonModule } from '@angular/common';
-import { Component, AfterViewInit, ChangeDetectionStrategy, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  ChangeDetectorRef,
+  ElementRef,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-type ConversionFormat = 'json' | 'csv' | 'sql' | 'ndjson';
-
-interface FormatOption {
-  value: ConversionFormat;
-  label: string;
-  description: string;
-  accent: string;
+// API Response types matching backend
+interface TableInfo {
+  name: string;
+  rowCount: number;
+  columns: string[];
 }
 
-interface HighlightCard {
-  title: string;
-  detail: string;
-  badge: string;
+interface ConvertSuccessData {
+  fileName: string;
+  fileSize: number;
+  tableCount: number;
+  totalRows: number;
+  tables: TableInfo[];
+  content: Record<string, unknown[]>;
+}
+
+interface ApiResponse<T = unknown> {
+  success: boolean;
+  data: T | null;
+  error: {
+    code: string;
+    message: string;
+    details?: string;
+  } | null;
+  meta: {
+    timestamp: string;
+    processingTimeMs: number;
+  };
+}
+
+interface ResultStats {
+  fileName: string;
+  fileSize: number;
+  tableCount: number;
+  totalRows: number;
 }
 
 @Component({
@@ -25,88 +55,82 @@ interface HighlightCard {
   imports: [CommonModule, FormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class App implements AfterViewInit {
-  @ViewChildren('parallaxLayer') private parallaxLayers!: QueryList<ElementRef<HTMLElement>>;
-  @ViewChildren('reveal') private revealBlocks!: QueryList<ElementRef<HTMLElement>>;
+  @ViewChildren('parallaxLayer') private parallaxLayers!: QueryList<
+    ElementRef<HTMLElement>
+  >;
+  @ViewChildren('reveal') private revealBlocks!: QueryList<
+    ElementRef<HTMLElement>
+  >;
   @ViewChild('heroTitle') private heroTitle?: ElementRef<HTMLElement>;
 
-  protected baseUrl = 'https://api.yourdomain.com';
-  protected convertRoute = '/convert';
-  protected healthRoute = '/health';
-  protected selectedTable = 'main';
-  protected selectedFormat: ConversionFormat = 'json';
-  protected includeSchema = true;
-  protected wrapInTransaction = true;
-  protected prettyPrint = true;
-  protected batchSize = 500;
-  protected liveMode = false;
+  // API Configuration - Update this to your backend URL
+  private readonly API_BASE_URL = 'http://localhost:3456';
+
+  // UI State
   protected isBusy = false;
-  protected status: 'idle' | 'success' | 'error' | 'live' = 'idle';
-  protected statusMessage = 'Ready to preview without hitting your API.';
+  protected isDragging = false;
+  protected status: 'idle' | 'success' | 'error' = 'idle';
   protected durationMs = 0;
-  protected selectedFileName = 'Drop a .sqlite file or pick one below';
-  protected previewOutput = this.buildPreview(this.selectedFormat);
-  protected lastUpdated: string | null = null;
+  protected prettyPrint = true;
+  protected copied = false;
 
-  protected readonly formatOptions: FormatOption[] = [
-    { value: 'json', label: 'JSON', description: 'Structured JSON payload', accent: 'from-emerald-400 to-teal-500' },
-    { value: 'csv', label: 'CSV', description: 'Spreadsheet friendly', accent: 'from-sky-400 to-cyan-400' },
-    { value: 'sql', label: 'SQL', description: 'Schema + insert script', accent: 'from-indigo-400 to-blue-500' },
-    { value: 'ndjson', label: 'NDJSON', description: 'Streaming friendly lines', accent: 'from-amber-400 to-orange-500' }
-  ];
+  // File State
+  protected selectedFile: File | null = null;
+  protected selectedFileName = '';
 
-  protected readonly highlightCards: HighlightCard[] = [
-    { title: 'Route-first UI', detail: 'Bring your own REST routes; buttons map to your existing endpoints.', badge: 'Backend ready' },
-    { title: 'GSAP motion', detail: 'Modern parallax hero, scroll reveals, and floating badges to keep the page lively.', badge: 'Motion tuned' },
-    { title: 'Dark clarity', detail: 'Tailwind-styled glass panels tuned for focus in low-light dashboards.', badge: 'Dark mode' }
-  ];
+  // Result State
+  protected conversionResult: ConvertSuccessData | null = null;
+  protected resultStats: ResultStats | null = null;
+  protected previewOutput = '';
+  protected errorMessage = '';
 
-  protected readonly workflowSteps = [
-    'Drop a SQLite file or point to an S3 URL your backend knows how to fetch.',
-    'Pick an output shape: JSON for APIs, CSV for spreadsheets, SQL for migrations, NDJSON for streams.',
-    'Tune schema export, batching, and transaction wrapping to match your route expectations.',
-    'Send a live request to your backend when you are ready—or stay in preview mode for UI-only testing.'
-  ];
+  constructor(private cdr: ChangeDetectorRef) {}
 
-  private selectedFile?: File;
-
+  // File Handling
   protected onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      this.selectedFile = input.files[0];
-      this.selectedFileName = this.selectedFile.name;
+      this.setFile(input.files[0]);
     }
   }
 
   protected handleDragOver(event: DragEvent): void {
     event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  protected handleDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
   }
 
   protected handleDrop(event: DragEvent): void {
     event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+
     const droppedFile = event.dataTransfer?.files?.item(0);
     if (droppedFile) {
-      this.selectedFile = droppedFile;
-      this.selectedFileName = droppedFile.name;
+      this.setFile(droppedFile);
     }
   }
 
-  protected setFormat(format: ConversionFormat): void {
-    this.selectedFormat = format;
-    if (!this.liveMode) {
-      this.previewOutput = this.buildPreview(format);
-    }
+  private setFile(file: File): void {
+    this.selectedFile = file;
+    this.selectedFileName = file.name;
+    // Reset previous results when new file is selected
+    this.conversionResult = null;
+    this.resultStats = null;
+    this.previewOutput = '';
+    this.status = 'idle';
+    this.cdr.markForCheck();
   }
 
-  protected toggleLiveMode(): void {
-    this.liveMode = !this.liveMode;
-    this.statusMessage = this.liveMode
-      ? 'Live mode on: requests will hit your backend routes.'
-      : 'Preview mode: no network calls until you toggle Live.';
-  }
-
+  // Navigation
   protected scrollToWorkspace(): void {
     const target = document.getElementById('workspace');
     if (target) {
@@ -114,45 +138,133 @@ export class App implements AfterViewInit {
     }
   }
 
+  // Conversion
   protected async runConversion(event: Event): Promise<void> {
     event.preventDefault();
-    if (this.isBusy) {
+
+    if (this.isBusy || !this.selectedFile) {
       return;
     }
 
     this.isBusy = true;
-    this.status = this.liveMode ? 'live' : 'success';
+    this.status = 'idle';
+    this.errorMessage = '';
+    this.cdr.markForCheck();
+
     const startedAt = performance.now();
 
     try {
-      const result = this.liveMode ? await this.executeLiveRequest() : this.buildPreview(this.selectedFormat);
-      this.previewOutput = result || this.buildPreview(this.selectedFormat);
-      this.status = 'success';
-      this.statusMessage = this.liveMode ? 'Response returned from your backend.' : 'Preview generated locally.';
-    } catch (error) {
-      this.status = 'error';
-      this.statusMessage = (error as Error).message || 'Conversion failed. Check your route and try again.';
-    } finally {
+      const result = await this.executeConversion();
       this.durationMs = Math.round(performance.now() - startedAt);
-      this.lastUpdated = new Date().toLocaleTimeString();
+
+      if (result.success && result.data) {
+        this.conversionResult = result.data;
+        this.resultStats = {
+          fileName: result.data.fileName,
+          fileSize: result.data.fileSize,
+          tableCount: result.data.tableCount,
+          totalRows: result.data.totalRows,
+        };
+        this.previewOutput = this.formatOutput(result.data);
+        this.status = 'success';
+      } else {
+        this.status = 'error';
+        this.errorMessage =
+          result.error?.message || 'Conversion failed. Please try again.';
+        this.conversionResult = {} as ConvertSuccessData; // Set to show error UI
+      }
+    } catch (error) {
+      this.durationMs = Math.round(performance.now() - startedAt);
+      this.status = 'error';
+      this.errorMessage =
+        (error as Error).message || 'Failed to connect to the server.';
+      this.conversionResult = {} as ConvertSuccessData; // Set to show error UI
+    } finally {
       this.isBusy = false;
+      this.cdr.markForCheck();
     }
   }
 
-  protected get generatedCurl(): string {
-    const url = this.composeUrl(this.convertRoute);
-    const fileName = this.selectedFileName || 'database.sqlite';
-    return [
-      `curl -X POST "${url}" \\`,
-      `  -F "file=@${fileName}" \\`,
-      `  -F "format=${this.selectedFormat}" \\`,
-      `  -F "table=${this.selectedTable}" \\`,
-      `  -F "includeSchema=${this.includeSchema}" \\`,
-      `  -F "wrapInTransaction=${this.wrapInTransaction}" \\`,
-      `  -F "batchSize=${this.batchSize}"`
-    ].join('\n');
+  private async executeConversion(): Promise<ApiResponse<ConvertSuccessData>> {
+    const formData = new FormData();
+    if (this.selectedFile) {
+      formData.append('file', this.selectedFile);
+    }
+
+    const response = await fetch(`${this.API_BASE_URL}/convert`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+    return data as ApiResponse<ConvertSuccessData>;
   }
 
+  private formatOutput(data: ConvertSuccessData): string {
+    const output = {
+      fileName: data.fileName,
+      fileSize: data.fileSize,
+      tableCount: data.tableCount,
+      totalRows: data.totalRows,
+      tables: data.tables,
+      content: data.content,
+    };
+
+    return JSON.stringify(output, null, this.prettyPrint ? 2 : 0);
+  }
+
+  // Output Actions
+  protected togglePrettyPrint(): void {
+    this.prettyPrint = !this.prettyPrint;
+    if (this.conversionResult && this.status === 'success') {
+      this.previewOutput = this.formatOutput(this.conversionResult);
+    }
+    this.cdr.markForCheck();
+  }
+
+  protected async copyToClipboard(): Promise<void> {
+    if (!this.previewOutput) return;
+
+    try {
+      await navigator.clipboard.writeText(this.previewOutput);
+      this.copied = true;
+      this.cdr.markForCheck();
+
+      setTimeout(() => {
+        this.copied = false;
+        this.cdr.markForCheck();
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  }
+
+  protected downloadJson(): void {
+    if (!this.previewOutput) return;
+
+    const blob = new Blob([this.previewOutput], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download =
+      this.selectedFileName?.replace(/\.(sqlite|db)$/i, '') + '.json' ||
+      'converted.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Utility
+  protected formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  // GSAP Animations
   ngAfterViewInit(): void {
     gsap.registerPlugin(ScrollTrigger);
 
@@ -161,7 +273,7 @@ export class App implements AfterViewInit {
         opacity: 0,
         y: 30,
         duration: 0.9,
-        ease: 'power2.out'
+        ease: 'power2.out',
       });
     }
 
@@ -175,8 +287,8 @@ export class App implements AfterViewInit {
           ease: 'power3.out',
           scrollTrigger: {
             trigger: block.nativeElement,
-            start: 'top 85%'
-          }
+            start: 'top 85%',
+          },
         });
       });
     }
@@ -190,113 +302,10 @@ export class App implements AfterViewInit {
           scrollTrigger: {
             trigger: '#page',
             start: 'top top',
-            scrub: true
-          }
+            scrub: true,
+          },
         });
       });
     }
-
-    gsap.utils.toArray<HTMLElement>('.floating-chip').forEach((chip, i) => {
-      gsap.fromTo(
-        chip,
-        { y: 0 },
-        { y: i % 2 === 0 ? 8 : -8, repeat: -1, yoyo: true, ease: 'sine.inOut', duration: 3 + i * 0.2 }
-      );
-    });
-  }
-
-  private composeUrl(route: string): string {
-    try {
-      return new URL(route, this.baseUrl).toString();
-    } catch {
-      return `${this.baseUrl}${route}`;
-    }
-  }
-
-  private async executeLiveRequest(): Promise<string> {
-    const url = this.composeUrl(this.convertRoute);
-    const formData = new FormData();
-    if (this.selectedFile) {
-      formData.append('file', this.selectedFile);
-    }
-    formData.append('format', this.selectedFormat);
-    formData.append('table', this.selectedTable);
-    formData.append('includeSchema', String(this.includeSchema));
-    formData.append('wrapInTransaction', String(this.wrapInTransaction));
-    formData.append('pretty', String(this.prettyPrint));
-    formData.append('batchSize', String(this.batchSize));
-
-    const response = await fetch(url, {
-      method: 'POST',
-      body: formData
-    });
-
-    const text = await response.text();
-    if (!response.ok) {
-      throw new Error(text || 'Backend responded with an error.');
-    }
-
-    return text;
-  }
-
-  private buildPreview(format: ConversionFormat): string {
-    const rows = [
-      { id: 1024, customer: 'Cedar Labs', total: 12890.2, updated_at: '2024-07-01T12:42:10Z' },
-      { id: 1025, customer: 'Northwind Studio', total: 8490.75, updated_at: '2024-07-01T12:55:42Z' },
-      { id: 1026, customer: 'Helix Analytics', total: 16450.0, updated_at: '2024-07-02T08:03:17Z' }
-    ];
-
-    if (format === 'json') {
-      const payload = {
-        table: this.selectedTable,
-        rows,
-        schema: this.includeSchema
-          ? {
-              id: 'integer PRIMARY KEY',
-              customer: 'text',
-              total: 'real',
-              updated_at: 'text'
-            }
-          : undefined,
-        options: {
-          batchSize: this.batchSize,
-          wrapInTransaction: this.wrapInTransaction,
-          pretty: this.prettyPrint
-        }
-      };
-      return JSON.stringify(payload, null, this.prettyPrint ? 2 : 0);
-    }
-
-    if (format === 'csv') {
-      const header = 'id,customer,total,updated_at';
-      const lines = rows.map((row) => `${row.id},${row.customer},${row.total.toFixed(2)},${row.updated_at}`);
-      return [header, ...lines].join('\n');
-    }
-
-    if (format === 'sql') {
-      const sqlLines = [`-- export for table: ${this.selectedTable}`, 'BEGIN TRANSACTION;'];
-
-      if (this.includeSchema) {
-        sqlLines.push(
-          `CREATE TABLE IF NOT EXISTS ${this.selectedTable} (`,
-          '  id INTEGER PRIMARY KEY,',
-          '  customer TEXT,',
-          '  total REAL,',
-          '  updated_at TEXT',
-          ');'
-        );
-      }
-
-      rows.forEach((row) =>
-        sqlLines.push(
-          `INSERT INTO ${this.selectedTable} (id, customer, total, updated_at) VALUES (${row.id}, '${row.customer}', ${row.total}, '${row.updated_at}');`
-        )
-      );
-
-      sqlLines.push('COMMIT;');
-      return sqlLines.join('\n');
-    }
-
-    return rows.map((row) => JSON.stringify(row)).join('\n');
   }
 }
