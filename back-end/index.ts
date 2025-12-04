@@ -18,6 +18,7 @@ const app = new Elysia()
   )
   .onRequest(({ set }) => {
     // Ensure CORS headers are present even if middleware misses an edge case.
+
     set.headers["Access-Control-Allow-Origin"] = FRONTEND_ORIGIN;
     set.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS";
     set.headers["Access-Control-Allow-Headers"] = "Content-Type,Accept";
