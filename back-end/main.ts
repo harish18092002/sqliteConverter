@@ -108,8 +108,10 @@ export const UserController = (app: Elysia) => {
         );
       }
 
-      // Setup temp file
-      const tempDir = join(import.meta.dir, "temp");
+      // Setup temp file - use /tmp for production (Railway's writable directory)
+      const tempDir = process.env.RAILWAY_ENVIRONMENT
+        ? "/tmp"
+        : join(import.meta.dir, "temp");
       if (!existsSync(tempDir)) {
         await mkdir(tempDir, { recursive: true });
       }
