@@ -1,0 +1,12 @@
+{
+  "hosting": {
+    "public": "dist/sqlite-converter-ui/browser",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
