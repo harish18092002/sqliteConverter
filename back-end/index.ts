@@ -2,12 +2,17 @@ import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { UserController } from "./main";
 
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:4200";
+// Allow multiple origins for dev and prod
+const ALLOWED_ORIGINS = [
+  "http://localhost:4200",
+  "https://sqliteconverter.web.app",
+  "https://sqliteconverter.firebaseapp.com",
+];
 
 const app = new Elysia()
   .use(
     cors({
-      origin: FRONTEND_ORIGIN,
+      origin: ALLOWED_ORIGINS,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Accept", "Authorization"],
       credentials: false,
