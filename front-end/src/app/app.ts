@@ -67,7 +67,7 @@ export class App implements AfterViewInit {
 
   // API Configuration - Update this to your backend URL
   private readonly API_BASE_URL =
-    'https://backend-production-6b5c.up.railway.app';
+    'https://sqliteconverter-990390454828.europe-west1.run.app';
 
   // private readonly API_BASE_URL = 'http://localhost:3456' for testing purposes
   // UI State

@@ -2,6 +2,9 @@ import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { UserController } from "./main";
 
+console.log(
+  "🟢 Backend startup: Loading index.ts at " + new Date().toISOString()
+);
 // Allow multiple origins for dev and prod
 const ALLOWED_ORIGINS = [
   "http://localhost:4200",
