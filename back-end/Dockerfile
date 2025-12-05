@@ -5,7 +5,7 @@ WORKDIR /app
 # Install dependencies
 FROM base AS install
 COPY package.json bun.lock* ./
-RUN bun install --production
+RUN bun install --production || bun install --production || bun install --production
 
 # Copy source and build
 FROM base AS build
