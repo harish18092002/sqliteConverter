@@ -2,11 +2,9 @@
 FROM oven/bun:1.1 AS base
 WORKDIR /app
 
-# Install deps (prod, frozen—ensure bun.lockb committed & not ignored)
+# Install deps (prod, frozen—ensure bun.lock* committed)
 FROM base AS install
-# Verbose COPY for debug (remove after fix)
-COPY -v package.json bun.lockb ./
-# Fallback if using text lock: COPY package.json bun.lock* ./
+COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile --production --ignore-scripts
 
 # Build app
