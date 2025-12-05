@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Install deps
 FROM base AS install
-COPY package.json bun.lock ./
+COPY package.json ./
 RUN bun install --production --no-frozen-lockfile
 
 # Build app
