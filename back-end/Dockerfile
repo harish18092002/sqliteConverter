@@ -5,7 +5,7 @@ WORKDIR /app
 # Install deps (prod, frozen—ensure bun.lock* committed)
 FROM base AS install
 COPY package.json bun.lock* ./
-RUN bun install --frozen-lockfile --production --ignore-scripts
+RUN bun install --production
 
 # Build app
 FROM base AS build
