@@ -1,35 +1,35 @@
-# Use official Bun image (latest stable)
-FROM oven/bun:1 AS base
+# Use pinned Bun image for stability
+FROM oven/bun:1.1 AS base
 WORKDIR /app
 
-# Install dependencies (only prod deps for slim image)
+# Install dependencies (prod only, frozen for reproducibility)
 FROM base AS install
-# If context is root, use: COPY back-end/package.json back-end/bun.lock* ./
-COPY package.json bun.lock* ./
-# Add frozen-lockfile to match bun.lock exactly; retry not needed (transient 500s)
-RUN bun install --frozen-lockfile --production
+# If build context is repo root: COPY back-end/package.json back-end/bun.lockb ./
+COPY package.json bun.lockb ./
+# --frozen-lockfile requires up-to-date lockfile; run `bun install` locally & commit if mismatch
+RUN bun install --frozen-lockfile --production --ignore-scripts
 
 # Build the app
 FROM base AS build
 COPY --from=install /app/node_modules ./node_modules
-# If context is root, use: COPY back-end/ ./
+# If build context is repo root: COPY back-end/ ./
 COPY . .
-# Compile to standalone binary (Bun target for runtime efficiency)
+# Compile to standalone binary
 RUN bun build --compile --target=bun index.ts --outfile=dist/index
 
-# Production image: Minimal, non-root, secure (no shell)
+# Production image: Minimal & secure
 FROM gcr.io/distroless/base-debian12
 WORKDIR /app
 COPY --from=build /app/dist/index ./index
 
-# Cloud Run expects PORT env
+# Cloud Run PORT
 ENV PORT=8080
 EXPOSE 8080
 
-# Healthcheck (optional: ping your API endpoint)
+# Optional healthcheck (adjust /health to your endpoint)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT}/health || exit 1
 
-# Run compiled binary (non-root by default in distroless)
+# Run as non-root
+USER 65532
 CMD ["./index"]
-USER 65532  # Non-root user for security
