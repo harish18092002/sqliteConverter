@@ -1,5 +1,5 @@
 # Pinned Bun for stability
-FROM oven/bun:1.1 AS base
+FROM oven/bun:1 AS base
 WORKDIR /app
 
 # Install deps (prod, frozen—ensure bun.lock* committed)
